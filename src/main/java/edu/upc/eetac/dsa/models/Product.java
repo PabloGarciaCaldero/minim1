@@ -1,5 +1,7 @@
 package edu.upc.eetac.dsa.models;
 
+import java.util.Objects;
+
 public class Product {
     String productID;
     String productName;
@@ -38,5 +40,13 @@ public class Product {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public void sold(int quantity){
+        this.numSales = numSales + quantity;
+    }
+
+    public boolean isNull(){
+        return (Objects.equals(productID, ""));
     }
 }

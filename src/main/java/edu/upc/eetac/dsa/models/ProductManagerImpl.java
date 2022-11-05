@@ -1,6 +1,7 @@
 package edu.upc.eetac.dsa.models;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 public class ProductManagerImpl implements ProductManager {
 
@@ -9,10 +10,15 @@ public class ProductManagerImpl implements ProductManager {
     Map<String, User> users;
     Queue<Order> orders;
 
+    final static Logger logger = Logger.getLogger(String.valueOf(ProductManagerImpl.class));
+
+
     public static ProductManagerImpl getInstance(){
         if (instance==null) instance = new ProductManagerImpl();
         return (ProductManagerImpl) instance;
     }
+
+
 
     public ProductManagerImpl(){
         this.products = new ArrayList<>();
@@ -23,37 +29,54 @@ public class ProductManagerImpl implements ProductManager {
 
     @Override
     public List<Product> productsByPrice() {
-        return null;
+        this.products.sort((Product p1, Product p2) -> Double.compare(p1.getPrice(), p2.getPrice()));
+        return this.products;
     }
 
     @Override
     public List<Product> productsBySales() {
-        return null;
+        this.products.sort((Product p2, Product p1) -> Double.compare(p1.getNumSales(), p2.getNumSales()));
+        return this.products;
     }
 
     @Override
     public void addOrder(Order order) {
-
+        this.orders.add(order);
     }
 
     @Override
     public Order processOrder() {
-        return null;
+        Order order = this.orders.poll();
+        executeProcess(order);
+        return order;
+    }
+
+    private void executeProcess(Order order) {
+        for (LP element: order.getElements()){
+            Product product = this.getProduct(element.getProduct());
+            int index = products.indexOf(product);
+            product.sold(element.getQuantity());
+            products.set(index,product);
+        }
+        this.users.get(order.getUserId()).addProcessedOrder(order);
     }
 
     @Override
     public List<Order> ordersByUser(String userId) {
-        return null;
+        return this.users.get(userId).getProcessOrders();
     }
 
     @Override
     public void addUser(String s, String name, String surname) {
-
+        this.users.put(s, new User(s,name, surname));
     }
 
     @Override
     public void addProduct(String productId, String name, double price) {
-
+    if (!getProduct(productId).isNull()){
+        return;
+    }
+    this.products.add(new Product(productId, name, price, 0));
     }
 
     @Override
@@ -75,7 +98,7 @@ public class ProductManagerImpl implements ProductManager {
 
     @Override
     public int numProducts() {
-        return this.products.size();
+        return products.size();
     }
 
     @Override
@@ -92,6 +115,7 @@ public class ProductManagerImpl implements ProductManager {
     public int size() {
         int ret = this.products.size();
 
-        return 0;
+        logger.info("size " + ret);
+        return ret;
     }
 }

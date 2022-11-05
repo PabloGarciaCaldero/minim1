@@ -1,5 +1,6 @@
 package edu.upc.eetac.dsa.models;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class User {
@@ -14,6 +15,7 @@ public class User {
         this.Name = Name;
         this.surName = surName;
         this.userId = userId;
+        this.processOrders = new LinkedList<>();
     }
 
     public String getName() {
@@ -46,5 +48,8 @@ public class User {
 
     public void setProcessOrders(List<Order> processOrders) {
         this.processOrders = processOrders;
+    }
+
+    public void addProcessedOrder(Order order) { this.processOrders.add(order);
     }
 }
